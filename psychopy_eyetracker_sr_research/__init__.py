@@ -4,7 +4,7 @@
 # Distributed under the terms of the GNU General Public License (GPL).
 
 """Extension package for PsychoPy which adds support for various hardware
-devices by SR Research.
+devices by SR Research (via ioHub).
 """
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
