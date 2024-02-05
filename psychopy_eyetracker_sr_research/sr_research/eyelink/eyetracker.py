@@ -15,7 +15,7 @@ except ImportError:
 from psychopy.iohub.constants import EyeTrackerConstants
 from psychopy.iohub import EXP_SCRIPT_DIRECTORY
 from psychopy.iohub.errors import print2err, printExceptionDetailsToStdErr
-from psychopy.iohub.devices.computer import Computer, Device
+from psychopy.iohub.devices import Computer, Device
 from psychopy.iohub.devices.eyetracker.eye_events import *
 
 try:
