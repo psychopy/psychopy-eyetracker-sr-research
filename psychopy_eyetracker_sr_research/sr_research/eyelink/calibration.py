@@ -8,7 +8,7 @@ from psychopy import visual
 import sys
 import tempfile
 import os
-from psychopy.iohub.devices.computer import DeviceEvent, Computer
+from psychopy.iohub.devices import DeviceEvent, Computer
 from psychopy.iohub.constants import EventConstants
 from psychopy.iohub.errors import print2err, printExceptionDetailsToStdErr
 from psychopy.iohub.util import convertCamelToSnake, win32MessagePump, updateSettings, createCustomCalibrationStim
