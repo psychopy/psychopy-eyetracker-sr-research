@@ -427,7 +427,7 @@ class EyeTracker(EyeTrackerDevice):
             # {'message': 'calibration_result: 0', 'result': 1000}
             # on a successful calibration.
 
-            genv._unregisterEventMonitors()
+            # genv._unregisterEventMonitors()
             genv.clearAllEventBuffers()
             genv.window.close()
             del genv.window
