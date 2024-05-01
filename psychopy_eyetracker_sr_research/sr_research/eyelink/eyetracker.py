@@ -428,6 +428,8 @@ class EyeTracker(EyeTrackerDevice):
             # on a successful calibration.
 
             # genv._unregisterEventMonitors()
+            genv.window.winHandle.set_fullscreen(False)
+            genv.window.winHandle.minimize()
             genv.clearAllEventBuffers()
             genv.window.close()
             del genv.window
