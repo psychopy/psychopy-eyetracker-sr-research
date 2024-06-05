@@ -394,8 +394,11 @@ class EyeTracker(EyeTrackerDevice):
 
             * C = Start Calibration
             * V = Start Validation
-            * ENTER should be pressed at the end of a calibration or validation to accept the calibration, or in the case of validation, use the option drift correction that can be performed as part of the validation process in the EyeLink system.
-            * ESC can be pressed at any time to exit the current state of the setup procedure and return to the initial blank screen state.
+            * ENTER should be pressed at the end of a calibration or validation to accept the calibration,
+            or in the case of validation, use the option drift correction that can be performed as part of
+            the validation process in the EyeLink system.
+            * ESC can be pressed at any time to exit the current state of the setup procedure and return to
+            the initial blank screen state.
             * O = Exit the runSetupProcedure method and continue with the experiment.
         """
         try:
@@ -499,7 +502,7 @@ class EyeTracker(EyeTrackerDevice):
                 while starter_thread.is_alive() or Computer.getTime()-stime < 0.5:
                     gevent.sleep(0.001)
                 starter_thread.join()
-                #print2err('start: ', Computer.getTime()-stime)
+                # print2err('start: ', Computer.getTime()-stime)
                 if Computer.platform == 'win32' and EyeTracker._keyboard:
                     EyeTracker._keyboard._syncPressedKeyState()
                 EyeTrackerDevice.enableEventReporting(self, True)
@@ -512,7 +515,7 @@ class EyeTracker(EyeTrackerDevice):
                 while stopper_thread.is_alive() or Computer.getTime()-stime < 0.5:
                     gevent.sleep(0.001)
                 stopper_thread.join()
-                #print2err('stop: ', Computer.getTime() - stime)
+                # print2err('stop: ', Computer.getTime() - stime)
                 if Computer.platform == 'win32' and EyeTracker._keyboard:
                     EyeTracker._keyboard._syncPressedKeyState()
                 EyeTrackerDevice.enableEventReporting(self, False)
