@@ -27,14 +27,17 @@ try:
 except Exception:
     pass
 
+
 def start_eyelink(eyelink):
     eyelink.startRecording(1, 1, 1, 1)
     gevent.sleep(0.01)
     if not eyelink.waitForBlockStart(100, 1, 0):
         print2err('EYETRACKER_START_RECORD_EXCEPTION ')
 
+
 def stop_eyelink(eyelink):
     eyelink.stopRecording()
+
 
 class EyeTracker(EyeTrackerDevice):
     """
@@ -43,10 +46,10 @@ class EyeTracker(EyeTrackerDevice):
     class in the iohub_config.yaml device settings file:
 
         eyetracker.hw.sr_research.eyelink
-        
+
     Examples:
         A. Start ioHub with SR Research EyeLink 1000 and run tracker calibration::
-    
+
             from psychopy.iohub import launchHubServer
             from psychopy.core import getTime, wait
 
@@ -54,38 +57,38 @@ class EyeTracker(EyeTrackerDevice):
             iohub_config = {'eyetracker.hw.sr_research.eyelink.EyeTracker':
                             {'name': 'tracker',
                              'model_name': 'EYELINK 1000 DESKTOP',
-                             'runtime_settings': {'sampling_rate': 500, 
+                             'runtime_settings': {'sampling_rate': 500,
                                                   'track_eyes': 'RIGHT'}
                              }
                             }
             io = launchHubServer(**iohub_config)
-            
+
             # Get the eye tracker device.
             tracker = io.devices.tracker
-                            
+
             # run eyetracker calibration
             r = tracker.runSetupProcedure()
-            
+
         B. Print all eye tracker events received for 2 seconds::
-                        
+
             # Check for and print any eye tracker events received...
             tracker.setRecordingState(True)
-            
+
             stime = getTime()
             while getTime()-stime < 2.0:
                 for e in tracker.getEvents():
                     print(e)
-            
+
         C. Print current eye position for 5 seconds::
-                        
+
             # Check for and print current eye position every 100 msec.
             stime = getTime()
             while getTime()-stime < 5.0:
                 print(tracker.getPosition())
                 wait(0.1)
-            
+
             tracker.setRecordingState(False)
-            
+
             # Stop the ioHub Server
             io.quit()
     """
@@ -179,7 +182,7 @@ class EyeTracker(EyeTrackerDevice):
                     # If edf file name has been set to EXPFILE, use the datastore file name as the local
                     # edf file name, getting around the 8 char host name limit.
                     EyeTracker._local_edf_dir = os.path.join(EyeTracker._local_edf_dir, "data")
-                    if self._iohub_server.dsfile: 
+                    if self._iohub_server.dsfile:
                         local_file_name = self._iohub_server.dsfile.fileName[:-5]
                         EyeTracker._full_edf_name = local_file_name
                         EyeTracker._host_edf_name = default_native_data_file_name
@@ -192,7 +195,8 @@ class EyeTracker(EyeTrackerDevice):
                     if len(default_native_data_file_name) > 7:
                         EyeTracker._full_edf_name = default_native_data_file_name
                         twoDigitRand = np.random.randint(10, 99)
-                        EyeTracker._host_edf_name = self._full_edf_name[:3] + str(twoDigitRand) + self._full_edf_name[5:7]
+                        EyeTracker._host_edf_name = self._full_edf_name[:3] +\
+                            str(twoDigitRand) + self._full_edf_name[5:7]
                     else:
                         EyeTracker._full_edf_name = default_native_data_file_name
                         EyeTracker._host_edf_name = default_native_data_file_name
@@ -1388,7 +1392,8 @@ class EyeTracker(EyeTrackerDevice):
                         (hsw, hsh, hsw, hsh))
             else:
                 print2err(
-                    'ERROR: "physical_stimudisplay_x,display_ylus_area":"width" or "height" value could not be read from monitor settings')
+                    'ERROR: "physical_stimudisplay_x,display_ylus_area":"width" or "height" value '
+                    'could not be read from monitor settings')
                 return False
 
             # calibration coord space
