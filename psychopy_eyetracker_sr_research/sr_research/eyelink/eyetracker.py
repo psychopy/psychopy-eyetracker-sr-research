@@ -279,7 +279,7 @@ class EyeTracker(EyeTrackerDevice):
                     return EyeTrackerConstants.EYETRACKER_OK
             else:
                 print2err('INVALID_METHOD_ARGUMENT_VALUE')
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def isConnected(self):
@@ -299,7 +299,7 @@ class EyeTracker(EyeTrackerDevice):
         """
         try:
             return self._eyelink.isConnected() != 0
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def sendCommand(self, key, value=None):
@@ -334,7 +334,7 @@ class EyeTracker(EyeTrackerDevice):
                 r = self._readResultFromTracker(cmdstr)
                 print2err('[%s] result: %s' % (cmdstr, r))
                 return EyeTrackerConstants.EYETRACKER_OK
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def sendMessage(self, message_contents, time_offset=None):
@@ -358,7 +358,7 @@ class EyeTracker(EyeTrackerDevice):
             if r == 0:
                 return EyeTrackerConstants.EYETRACKER_OK
             return EyeTrackerConstants.EYETRACKER_ERROR
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
         return EyeTrackerConstants.EYETRACKER_ERROR
 
@@ -447,7 +447,7 @@ class EyeTracker(EyeTrackerDevice):
 
             return reply
 
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
             return EyeTrackerConstants.EYETRACKER_ERROR
 
@@ -463,7 +463,7 @@ class EyeTracker(EyeTrackerDevice):
         """
         try:
             return self._eyelink.isRecording() == 0
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def enableEventReporting(self, enabled=True):
@@ -472,7 +472,7 @@ class EyeTracker(EyeTrackerDevice):
         try:
             enabled = EyeTrackerDevice.enableEventReporting(self, enabled)
             return self.setRecordingState(enabled)
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def setRecordingState(self, recording):
@@ -520,7 +520,7 @@ class EyeTracker(EyeTrackerDevice):
                 self._latest_sample = None
                 self._latest_gaze_position = None
                 return self.isRecordingEnabled()
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def getLastSample(self):
@@ -541,7 +541,7 @@ class EyeTracker(EyeTrackerDevice):
         """
         try:
             return self._latest_sample
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def getLastGazePosition(self):
@@ -570,7 +570,7 @@ class EyeTracker(EyeTrackerDevice):
         """
         try:
             return self._latest_gaze_position
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def _poll(self):
@@ -1139,7 +1139,7 @@ class EyeTracker(EyeTrackerDevice):
 
             gxn, gyn = eyetracker_point[0] / dw, eyetracker_point[1] / dh
             return cl + cw * gxn, cb + ch * (1.0 - gyn)
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def _displayToEyeTrackerCoords(self, display_x, display_y):
@@ -1155,7 +1155,7 @@ class EyeTracker(EyeTrackerDevice):
                        (display_y - ch / 2) / ch
             return cxn * dw, cyn * dh
 
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def _setRuntimeSettings(self, runtimeSettings):
@@ -1601,7 +1601,7 @@ def _getTrackerMode(*args, **kwargs):
     try:
         r = pylink.getEYELINK().getTrackerMode()
         return _EYELINK_HOST_MODES[r]
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1614,7 +1614,7 @@ def _doDriftCorrect(*args, **kwargs):
         else:
             print2err('doDriftCorrect requires 4 parameters, received: ', args)
             return False
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1625,7 +1625,7 @@ def _applyDriftCorrect():
             return True
         else:
             return ['EYE_TRACKER_ERROR', 'applyDriftCorrect', r]
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1640,7 +1640,7 @@ def _eyeAvailable(*args, **kwargs):
             return EyeTrackerConstants.getName(EyeTrackerConstants.BINOCULAR)
         else:
             return EyeTrackerConstants.UNDEFINED
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1648,7 +1648,7 @@ def _dummyOpen(*args, **kwargs):
     try:
         r = pylink.getEYELINK().dummy_open()
         return r
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1661,7 +1661,7 @@ def _getCalibrationMessage(*args, **kwargs):
         else:
             r = 'NO_REPLY'
         return dict(message=m, result=r)
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1676,7 +1676,7 @@ def _setIPAddress(*args, **kwargs):
             'EYE_TRACKER_ERROR',
             'setIPAddress',
             'Could not Parse IP String']
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1688,7 +1688,7 @@ def _setLockEye(*args, **kwargs):
             return r
         return ['EYE_TRACKER_ERROR', 'setLockEye',
                 'One argument is required, bool type.']
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1698,5 +1698,5 @@ def _setNativeRecordingFileSaveDir(*args):
             edfpath = args[0]
             print2err('Setting File Save path: ', edfpath)
             EyeTracker._local_edf_dir = edfpath
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
