@@ -6,6 +6,7 @@ import os
 import gevent
 import threading
 import pylink
+import numpy as np
 
 try:
     from psychopy.gui.wxgui import ProgressBarDialog
@@ -16,7 +17,10 @@ from psychopy.iohub.constants import EyeTrackerConstants
 from psychopy.iohub import EXP_SCRIPT_DIRECTORY
 from psychopy.iohub.errors import print2err, printExceptionDetailsToStdErr
 from psychopy.iohub.devices import Computer, Device
-from psychopy.iohub.devices.eyetracker.eye_events import *
+from psychopy.iohub.devices.eyetracker.eye_events import (
+    EventConstants,
+    EyeTrackerDevice
+)
 
 try:
     pylink.enableUTF8EyeLinkMessages()
