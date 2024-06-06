@@ -14,14 +14,17 @@ from psychopy.iohub.errors import print2err, printExceptionDetailsToStdErr
 from psychopy.iohub.util import convertCamelToSnake, win32MessagePump, updateSettings, createCustomCalibrationStim
 import pylink
 
+
 class FixationTarget():
     def __init__(self, psychopy_eyelink_graphics):
         win = psychopy_eyelink_graphics.window
         color_type = psychopy_eyelink_graphics.getCalibSetting(['color_type'])
         unit_type = psychopy_eyelink_graphics.getCalibSetting(['unit_type'])
 
-        outer_fill_color = outer_line_color = psychopy_eyelink_graphics.getCalibSetting(['target_attributes', 'outer_color'])
-        inner_fill_color = inner_line_color = psychopy_eyelink_graphics.getCalibSetting(['target_attributes', 'inner_color'])
+        outer_fill_color = outer_line_color = psychopy_eyelink_graphics.getCalibSetting(
+            ['target_attributes', 'outer_color'])
+        inner_fill_color = inner_line_color = psychopy_eyelink_graphics.getCalibSetting(
+            ['target_attributes', 'inner_color'])
 
         if outer_fill_color is None:
             outer_fill_color = psychopy_eyelink_graphics.getCalibSetting(['target_attributes', 'outer_fill_color'])
@@ -57,6 +60,7 @@ class FixationTarget():
             self.calibrationPointOuter.pos = pos
             self.calibrationPointInner.pos = pos
         self.calibrationPoint.draw()
+
 
 # Intro Screen
 class BlankScreen():
@@ -632,7 +636,7 @@ class EyeLinkCalibrationProcedure(pylink.EyeLinkCustomDisplay):
         for i in range(width):
             try:
                 self.rgb_index_array[line - 1, i] = buff[i]
-            except Exception as e:
+            except Exception:
                 printExceptionDetailsToStdErr()
                 print2err(
                     'FAILED TO DRAW PIXEL TO IMAGE LINE: %d %d' %
