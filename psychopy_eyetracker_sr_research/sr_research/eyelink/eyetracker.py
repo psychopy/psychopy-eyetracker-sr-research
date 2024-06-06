@@ -1569,6 +1569,10 @@ class EyeTracker(EyeTrackerDevice):
             printExceptionDetailsToStdErr()
             return EyeTrackerConstants.EYETRACKER_ERROR
 
+    def _close(self):
+        self.setRecordingState(False)
+        self.setConnectionState(False)
+        EyeTrackerDevice._close(self)
 
 # ================= Command Functions ==========================================
 
