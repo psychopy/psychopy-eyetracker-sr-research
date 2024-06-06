@@ -1,3 +1,17 @@
+# OS generated files #
+######################
+.directory
+.gdb_history
+.DS_Store
+ehthumbs.db
+Icon?
+*.orig
+old
+Thumbs.db
+nonSVN
+.hg*
+*.log
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

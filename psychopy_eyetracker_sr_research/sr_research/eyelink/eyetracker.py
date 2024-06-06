@@ -6,6 +6,7 @@ import os
 import gevent
 import threading
 import pylink
+import numpy as np
 
 try:
     from psychopy.gui.wxgui import ProgressBarDialog
@@ -16,12 +17,16 @@ from psychopy.iohub.constants import EyeTrackerConstants
 from psychopy.iohub import EXP_SCRIPT_DIRECTORY
 from psychopy.iohub.errors import print2err, printExceptionDetailsToStdErr
 from psychopy.iohub.devices import Computer, Device
-from psychopy.iohub.devices.eyetracker.eye_events import *
+from psychopy.iohub.devices.eyetracker.eye_events import (
+    EventConstants,
+    EyeTrackerDevice
+)
 
 try:
     pylink.enableUTF8EyeLinkMessages()
 except Exception:
     pass
+
 
 def start_eyelink(eyelink):
     eyelink.startRecording(1, 1, 1, 1)
@@ -29,8 +34,10 @@ def start_eyelink(eyelink):
     if not eyelink.waitForBlockStart(100, 1, 0):
         print2err('EYETRACKER_START_RECORD_EXCEPTION ')
 
+
 def stop_eyelink(eyelink):
     eyelink.stopRecording()
+
 
 class EyeTracker(EyeTrackerDevice):
     """
@@ -39,10 +46,10 @@ class EyeTracker(EyeTrackerDevice):
     class in the iohub_config.yaml device settings file:
 
         eyetracker.hw.sr_research.eyelink
-        
+
     Examples:
         A. Start ioHub with SR Research EyeLink 1000 and run tracker calibration::
-    
+
             from psychopy.iohub import launchHubServer
             from psychopy.core import getTime, wait
 
@@ -50,38 +57,38 @@ class EyeTracker(EyeTrackerDevice):
             iohub_config = {'eyetracker.hw.sr_research.eyelink.EyeTracker':
                             {'name': 'tracker',
                              'model_name': 'EYELINK 1000 DESKTOP',
-                             'runtime_settings': {'sampling_rate': 500, 
+                             'runtime_settings': {'sampling_rate': 500,
                                                   'track_eyes': 'RIGHT'}
                              }
                             }
             io = launchHubServer(**iohub_config)
-            
+
             # Get the eye tracker device.
             tracker = io.devices.tracker
-                            
+
             # run eyetracker calibration
             r = tracker.runSetupProcedure()
-            
+
         B. Print all eye tracker events received for 2 seconds::
-                        
+
             # Check for and print any eye tracker events received...
             tracker.setRecordingState(True)
-            
+
             stime = getTime()
             while getTime()-stime < 2.0:
                 for e in tracker.getEvents():
                     print(e)
-            
+
         C. Print current eye position for 5 seconds::
-                        
+
             # Check for and print current eye position every 100 msec.
             stime = getTime()
             while getTime()-stime < 5.0:
                 print(tracker.getPosition())
                 wait(0.1)
-            
+
             tracker.setRecordingState(False)
-            
+
             # Stop the ioHub Server
             io.quit()
     """
@@ -175,7 +182,7 @@ class EyeTracker(EyeTrackerDevice):
                     # If edf file name has been set to EXPFILE, use the datastore file name as the local
                     # edf file name, getting around the 8 char host name limit.
                     EyeTracker._local_edf_dir = os.path.join(EyeTracker._local_edf_dir, "data")
-                    if self._iohub_server.dsfile: 
+                    if self._iohub_server.dsfile:
                         local_file_name = self._iohub_server.dsfile.fileName[:-5]
                         EyeTracker._full_edf_name = local_file_name
                         EyeTracker._host_edf_name = default_native_data_file_name
@@ -188,7 +195,8 @@ class EyeTracker(EyeTrackerDevice):
                     if len(default_native_data_file_name) > 7:
                         EyeTracker._full_edf_name = default_native_data_file_name
                         twoDigitRand = np.random.randint(10, 99)
-                        EyeTracker._host_edf_name = self._full_edf_name[:3] + str(twoDigitRand) + self._full_edf_name[5:7]
+                        EyeTracker._host_edf_name = self._full_edf_name[:3] +\
+                            str(twoDigitRand) + self._full_edf_name[5:7]
                     else:
                         EyeTracker._full_edf_name = default_native_data_file_name
                         EyeTracker._host_edf_name = default_native_data_file_name
@@ -271,7 +279,7 @@ class EyeTracker(EyeTrackerDevice):
                     return EyeTrackerConstants.EYETRACKER_OK
             else:
                 print2err('INVALID_METHOD_ARGUMENT_VALUE')
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def isConnected(self):
@@ -291,7 +299,7 @@ class EyeTracker(EyeTrackerDevice):
         """
         try:
             return self._eyelink.isConnected() != 0
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def sendCommand(self, key, value=None):
@@ -326,7 +334,7 @@ class EyeTracker(EyeTrackerDevice):
                 r = self._readResultFromTracker(cmdstr)
                 print2err('[%s] result: %s' % (cmdstr, r))
                 return EyeTrackerConstants.EYETRACKER_OK
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def sendMessage(self, message_contents, time_offset=None):
@@ -350,7 +358,7 @@ class EyeTracker(EyeTrackerDevice):
             if r == 0:
                 return EyeTrackerConstants.EYETRACKER_OK
             return EyeTrackerConstants.EYETRACKER_ERROR
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
         return EyeTrackerConstants.EYETRACKER_ERROR
 
@@ -386,8 +394,11 @@ class EyeTracker(EyeTrackerDevice):
 
             * C = Start Calibration
             * V = Start Validation
-            * ENTER should be pressed at the end of a calibration or validation to accept the calibration, or in the case of validation, use the option drift correction that can be performed as part of the validation process in the EyeLink system.
-            * ESC can be pressed at any time to exit the current state of the setup procedure and return to the initial blank screen state.
+            * ENTER should be pressed at the end of a calibration or validation to accept the calibration,
+            or in the case of validation, use the option drift correction that can be performed as part of
+            the validation process in the EyeLink system.
+            * ESC can be pressed at any time to exit the current state of the setup procedure and return to
+            the initial blank screen state.
             * O = Exit the runSetupProcedure method and continue with the experiment.
         """
         try:
@@ -439,7 +450,7 @@ class EyeTracker(EyeTrackerDevice):
 
             return reply
 
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
             return EyeTrackerConstants.EYETRACKER_ERROR
 
@@ -455,7 +466,7 @@ class EyeTracker(EyeTrackerDevice):
         """
         try:
             return self._eyelink.isRecording() == 0
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def enableEventReporting(self, enabled=True):
@@ -464,7 +475,7 @@ class EyeTracker(EyeTrackerDevice):
         try:
             enabled = EyeTrackerDevice.enableEventReporting(self, enabled)
             return self.setRecordingState(enabled)
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def setRecordingState(self, recording):
@@ -491,7 +502,7 @@ class EyeTracker(EyeTrackerDevice):
                 while starter_thread.is_alive() or Computer.getTime()-stime < 0.5:
                     gevent.sleep(0.001)
                 starter_thread.join()
-                #print2err('start: ', Computer.getTime()-stime)
+                # print2err('start: ', Computer.getTime()-stime)
                 if Computer.platform == 'win32' and EyeTracker._keyboard:
                     EyeTracker._keyboard._syncPressedKeyState()
                 EyeTrackerDevice.enableEventReporting(self, True)
@@ -504,7 +515,7 @@ class EyeTracker(EyeTrackerDevice):
                 while stopper_thread.is_alive() or Computer.getTime()-stime < 0.5:
                     gevent.sleep(0.001)
                 stopper_thread.join()
-                #print2err('stop: ', Computer.getTime() - stime)
+                # print2err('stop: ', Computer.getTime() - stime)
                 if Computer.platform == 'win32' and EyeTracker._keyboard:
                     EyeTracker._keyboard._syncPressedKeyState()
                 EyeTrackerDevice.enableEventReporting(self, False)
@@ -512,7 +523,7 @@ class EyeTracker(EyeTrackerDevice):
                 self._latest_sample = None
                 self._latest_gaze_position = None
                 return self.isRecordingEnabled()
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def getLastSample(self):
@@ -533,7 +544,7 @@ class EyeTracker(EyeTrackerDevice):
         """
         try:
             return self._latest_sample
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def getLastGazePosition(self):
@@ -562,7 +573,7 @@ class EyeTracker(EyeTrackerDevice):
         """
         try:
             return self._latest_gaze_position
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def _poll(self):
@@ -1131,7 +1142,7 @@ class EyeTracker(EyeTrackerDevice):
 
             gxn, gyn = eyetracker_point[0] / dw, eyetracker_point[1] / dh
             return cl + cw * gxn, cb + ch * (1.0 - gyn)
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def _displayToEyeTrackerCoords(self, display_x, display_y):
@@ -1147,7 +1158,7 @@ class EyeTracker(EyeTrackerDevice):
                        (display_y - ch / 2) / ch
             return cxn * dw, cyn * dh
 
-        except Exception as e:
+        except Exception:
             printExceptionDetailsToStdErr()
 
     def _setRuntimeSettings(self, runtimeSettings):
@@ -1384,7 +1395,8 @@ class EyeTracker(EyeTrackerDevice):
                         (hsw, hsh, hsw, hsh))
             else:
                 print2err(
-                    'ERROR: "physical_stimudisplay_x,display_ylus_area":"width" or "height" value could not be read from monitor settings')
+                    'ERROR: "physical_stimudisplay_x,display_ylus_area":"width" or "height" value '
+                    'could not be read from monitor settings')
                 return False
 
             # calibration coord space
@@ -1592,7 +1604,7 @@ def _getTrackerMode(*args, **kwargs):
     try:
         r = pylink.getEYELINK().getTrackerMode()
         return _EYELINK_HOST_MODES[r]
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1605,7 +1617,7 @@ def _doDriftCorrect(*args, **kwargs):
         else:
             print2err('doDriftCorrect requires 4 parameters, received: ', args)
             return False
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1616,7 +1628,7 @@ def _applyDriftCorrect():
             return True
         else:
             return ['EYE_TRACKER_ERROR', 'applyDriftCorrect', r]
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1631,7 +1643,7 @@ def _eyeAvailable(*args, **kwargs):
             return EyeTrackerConstants.getName(EyeTrackerConstants.BINOCULAR)
         else:
             return EyeTrackerConstants.UNDEFINED
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1639,7 +1651,7 @@ def _dummyOpen(*args, **kwargs):
     try:
         r = pylink.getEYELINK().dummy_open()
         return r
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1652,7 +1664,7 @@ def _getCalibrationMessage(*args, **kwargs):
         else:
             r = 'NO_REPLY'
         return dict(message=m, result=r)
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1667,7 +1679,7 @@ def _setIPAddress(*args, **kwargs):
             'EYE_TRACKER_ERROR',
             'setIPAddress',
             'Could not Parse IP String']
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1679,7 +1691,7 @@ def _setLockEye(*args, **kwargs):
             return r
         return ['EYE_TRACKER_ERROR', 'setLockEye',
                 'One argument is required, bool type.']
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()
 
 
@@ -1689,5 +1701,5 @@ def _setNativeRecordingFileSaveDir(*args):
             edfpath = args[0]
             print2err('Setting File Save path: ', edfpath)
             EyeTracker._local_edf_dir = edfpath
-    except Exception as e:
+    except Exception:
         printExceptionDetailsToStdErr()

@@ -16,12 +16,12 @@ __all__ = [
 ]
 
 from .eyetracker import (
-    EyeTracker, 
+    EyeTracker,
     MonocularEyeSampleEvent,
-    BinocularEyeSampleEvent, 
+    BinocularEyeSampleEvent,
     FixationStartEvent,
-    FixationEndEvent, 
+    FixationEndEvent,
     SaccadeStartEvent,
-    SaccadeEndEvent, 
+    SaccadeEndEvent,
     BlinkStartEvent,
     BlinkEndEvent)
