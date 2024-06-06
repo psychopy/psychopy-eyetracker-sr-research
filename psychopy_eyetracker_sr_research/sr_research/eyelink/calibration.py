@@ -12,6 +12,7 @@ from psychopy.iohub.devices import DeviceEvent, Computer
 from psychopy.iohub.constants import EventConstants
 from psychopy.iohub.errors import print2err, printExceptionDetailsToStdErr
 from psychopy.iohub.util import convertCamelToSnake, win32MessagePump, updateSettings, createCustomCalibrationStim
+from psychopy.iohub.devices.keyboard import KeyboardInputEvent
 import pylink
 
 
@@ -471,7 +472,6 @@ class EyeLinkCalibrationProcedure(pylink.EyeLinkCustomDisplay):
     def _handleEvent(self, event):
         event_type_index = DeviceEvent.EVENT_TYPE_ID_INDEX
         if event[event_type_index] == EventConstants.KEYBOARD_RELEASE:
-            from psychopy.iohub.devices.keyboard import KeyboardInputEvent
             key_index = KeyboardInputEvent.CLASS_ATTRIBUTE_NAMES.index('key')
             char = event[key_index]
             if isinstance(char, bytes):
