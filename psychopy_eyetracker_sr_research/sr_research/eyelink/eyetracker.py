@@ -1574,6 +1574,7 @@ class EyeTracker(EyeTrackerDevice):
         self.setConnectionState(False)
         EyeTrackerDevice._close(self)
 
+
 # ================= Command Functions ==========================================
 
 _EYELINK_HOST_MODES = {
