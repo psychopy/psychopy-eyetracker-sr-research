@@ -37,5 +37,8 @@ where = ["", "psychopy_eyetracker_sr_research",]
 [project.entry-points."psychopy.iohub.devices"]
 EyelinkEyeTracker = "psychopy_eyetracker_sr_research.sr_research.eyelink.eyetracker:EyeTracker"
 
+[project.entry-points."psychopy.iohub.devices.eyetracker"]
+EyelinkEyeTracker = "psychopy_eyetracker_sr_research.sr_research.eyelink.eyetracker:EyeTracker"
+
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
