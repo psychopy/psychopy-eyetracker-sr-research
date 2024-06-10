@@ -497,7 +497,7 @@ class EyeTracker(EyeTrackerDevice):
         by using the setConnectionState(True) method for recording to be possible.
 
         Args:
-            recording (bool): if True, the eye tracker will start recording data.; false = stop recording data.
+            recording (bool): if True, the eye tracker will start recording data; false = stop recording data.
 
         Return:
             bool: the current recording state of the eye tracking device
@@ -1524,7 +1524,7 @@ class EyeTracker(EyeTrackerDevice):
                 self._eyelink.sendCommand('use_ellipse_fitter = NO')
             else:
                 print2err(
-                    '** EyeLink Warning: _setPupilDetection: Unrecofnized pupil fitting type: ',
+                    '** EyeLink Warning: _setPupilDetection: Unrecognized pupil fitting type: ',
                     pmode)
                 return EyeTrackerConstants.EYETRACKER_ERROR
             return EyeTrackerConstants.EYETRACKER_OK
@@ -1553,7 +1553,7 @@ class EyeTracker(EyeTrackerDevice):
                 r = 0
             else:
                 print2err(
-                    'EYELINK Error during _setEyeTrackingMode: Unknown Trackiong Mode: ', r)
+                    'EYELINK Error during _setEyeTrackingMode: Unknown Tracking Mode: ', r)
                 return EyeTrackerConstants.EYETRACKER_ERROR
             if r == 0:
                 self._eyelink.sendCommand('force_corneal_reflection = OFF')
