@@ -155,9 +155,12 @@ class EyeTracker(EyeTrackerDevice):
                 tracker_config['enable_interface_without_connection'] = True
                 self.setConnectionState(True)
 
+            # Add additional EyeLink command functions as options for the overloaded
+            # EyeTracker.sendCommand() method. Note that this is separate from the
+            # pylink.EyeLink.sendCommand() method despite the same method name.
             self._addCommandFunctions()
 
-            # Sets the physical ini settings, like default screen distance,
+            # Set the physical ini settings, like default screen distance,
             # monitor size, and display coordinate bounds.
             self._eyelinkSetScreenPhysicalData()
 
@@ -168,23 +171,20 @@ class EyeTracker(EyeTrackerDevice):
             else:
                 self._eyelink.sendCommand('aux_mouse_simulation = NO')
 
-            # set that the EyeLink connected button box, button 5
+            # Set that the EyeLink connected button box, button 5
             # (the big button on most of supported gamepads), will initiate
             # an accept fixation command.
             self._eyelink.sendCommand("button_function 5 'accept_target_fixation'")
 
-            # Sets up the file names / paths to be used for the native EyeLink
-            # EDF file.
-            EyeTracker._local_edf_dir = EXP_SCRIPT_DIRECTORY
-
-            # Sets the 'runtime' configuration section of the eyetracker
+            # Set the 'runtime' configuration section of the eyetracker
             # settings, including eye to track, sample filtering level, etc.
             self._setRuntimeSettings(self._runtime_settings)
 
-            # calibration related settings
-            eyelink = self._eyelink
+            # Calibration related settings
+            self.sendCalibrationSettingsCommands(self._eyelink, tracker_config.get('calibration'))
 
-            self.sendCalibrationSettingsCommands(eyelink, tracker_config.get('calibration'))
+            # Set up the file names / paths to be used for the native EyeLink EDF file.
+            EyeTracker._local_edf_dir = EXP_SCRIPT_DIRECTORY
 
             # native data recording file
             default_native_data_file_name = tracker_config.get('default_native_data_file_name', None)
@@ -218,9 +218,8 @@ class EyeTracker(EyeTrackerDevice):
                 EyeTracker._active_edf_file = self._full_edf_name + '.EDF'
                 self._eyelink.openDataFile(self._host_edf_name + '.EDF')
 
-            # Creates a fileTransferDialog class that will be used when a connection is closed and
-            # a native EDF file needs to be transferred from Host to Experiment
-            # PC.
+            # Create a fileTransferDialog class that will be used when a connection is closed and
+            # a native EDF file needs to be transferred from Host to Experiment PC.
             EyeTracker._eyelink.progressUpdate = self._fileTransferProgressUpdate
         except Exception:
             print2err(' ---- Error during EyeLink EyeTracker Initialization ---- ')
@@ -282,7 +281,7 @@ class EyeTracker(EyeTrackerDevice):
 
                     if self._active_edf_file:
                         self._eyelink.closeDataFile()
-                        # Note: local_file_path directory must exist or file will not be saved locally.
+                        # NOTE: local_file_path directory must exist or file will not be saved locally.
                         local_file_path = os.path.join(self._local_edf_dir, self._active_edf_file)
                         self._eyelink.receiveDataFile(self._host_edf_name + '.EDF', local_file_path)
                     self._eyelink.close()
@@ -1173,6 +1172,7 @@ class EyeTracker(EyeTrackerDevice):
             printExceptionDetailsToStdErr()
 
     def _setRuntimeSettings(self, runtimeSettings):
+        """applies user defined runtime settings to the eye tracker."""
         for pkey, v in runtimeSettings.items():
             if pkey == 'sample_filtering':
                 all_filters = {'FILTER_FILE': 'FILTER_LEVEL_2',
@@ -1492,8 +1492,7 @@ class EyeTracker(EyeTrackerDevice):
             self._COMMAND_TO_FUNCTION['applyDriftCorrect'] = _applyDriftCorrect
             self._COMMAND_TO_FUNCTION['setIPAddress'] = _setIPAddress
             self._COMMAND_TO_FUNCTION['setLockEye'] = _setLockEye
-            self._COMMAND_TO_FUNCTION[
-                'setLocalResultsDir'] = _setNativeRecordingFileSaveDir
+            self._COMMAND_TO_FUNCTION['setLocalResultsDir'] = _setNativeRecordingFileSaveDir
         except Exception:
             print2err('EYELINK Error during _addCommandFunctions:')
             printExceptionDetailsToStdErr()
