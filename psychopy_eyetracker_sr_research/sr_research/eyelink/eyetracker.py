@@ -197,6 +197,18 @@ class EyeTracker(EyeTrackerDevice):
                         local_file_name = self._iohub_server.dsfile.fileName[:-5]
                         EyeTracker._full_edf_name = local_file_name
                         EyeTracker._host_edf_name = default_native_data_file_name
+                    else:
+                        # If datastore file is not enabled, attempt to use the PsychoPy experiment filename
+                        psychopy_file_name = None
+                        for dev in self._iohub_server.devices:
+                            if dev.__class__.__name__ == 'Experiment':
+                                psychopy_file_name = dev.getConfiguration()['filename']
+                        if psychopy_file_name:
+                            # make sure local_file_name is relative to _local_edf_dir
+                            EyeTracker._local_edf_dir = os.path.commonprefix([self._local_edf_dir, psychopy_file_name])
+                            local_file_name = os.path.relpath(psychopy_file_name, self._local_edf_dir)
+                            EyeTracker._full_edf_name = local_file_name
+                            EyeTracker._host_edf_name = default_native_data_file_name
                 else:
                     r = default_native_data_file_name.rfind('.')
                     if r > 0:
@@ -217,6 +229,8 @@ class EyeTracker(EyeTrackerDevice):
             if self._host_edf_name and self._local_edf_dir and self._full_edf_name:
                 EyeTracker._active_edf_file = self._full_edf_name + '.EDF'
                 self._eyelink.openDataFile(self._host_edf_name + '.EDF')
+            else:
+                print2err('WARNING: No active EDF file opened on host PC for this session.')
 
             # Create a fileTransferDialog class that will be used when a connection is closed and
             # a native EDF file needs to be transferred from Host to Experiment PC.
