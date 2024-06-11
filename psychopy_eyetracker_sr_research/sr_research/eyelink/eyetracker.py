@@ -295,7 +295,8 @@ class EyeTracker(EyeTrackerDevice):
 
                     if self._active_edf_file:
                         self._eyelink.closeDataFile()
-                        # NOTE: local_file_path directory must exist or file will not be saved locally.
+                        if not os.path.isdir(self._local_edf_dir):
+                            os.mkdir(self._local_edf_dir)
                         local_file_path = os.path.join(self._local_edf_dir, self._active_edf_file)
                         self._eyelink.receiveDataFile(self._host_edf_name + '.EDF', local_file_path)
                     self._eyelink.close()
