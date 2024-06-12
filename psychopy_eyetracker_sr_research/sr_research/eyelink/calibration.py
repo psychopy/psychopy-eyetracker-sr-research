@@ -12,7 +12,9 @@ from psychopy.iohub.devices import DeviceEvent, Computer
 from psychopy.iohub.constants import EventConstants
 from psychopy.iohub.errors import print2err, printExceptionDetailsToStdErr
 from psychopy.iohub.util import convertCamelToSnake, win32MessagePump, updateSettings, createCustomCalibrationStim
+from psychopy.iohub.devices.keyboard import KeyboardInputEvent
 import pylink
+
 
 class FixationTarget():
     def __init__(self, psychopy_eyelink_graphics):
@@ -20,8 +22,10 @@ class FixationTarget():
         color_type = psychopy_eyelink_graphics.getCalibSetting(['color_type'])
         unit_type = psychopy_eyelink_graphics.getCalibSetting(['unit_type'])
 
-        outer_fill_color = outer_line_color = psychopy_eyelink_graphics.getCalibSetting(['target_attributes', 'outer_color'])
-        inner_fill_color = inner_line_color = psychopy_eyelink_graphics.getCalibSetting(['target_attributes', 'inner_color'])
+        outer_fill_color = outer_line_color = psychopy_eyelink_graphics.getCalibSetting(
+            ['target_attributes', 'outer_color'])
+        inner_fill_color = inner_line_color = psychopy_eyelink_graphics.getCalibSetting(
+            ['target_attributes', 'inner_color'])
 
         if outer_fill_color is None:
             outer_fill_color = psychopy_eyelink_graphics.getCalibSetting(['target_attributes', 'outer_fill_color'])
@@ -57,6 +61,7 @@ class FixationTarget():
             self.calibrationPointOuter.pos = pos
             self.calibrationPointInner.pos = pos
         self.calibrationPoint.draw()
+
 
 # Intro Screen
 class BlankScreen():
@@ -467,7 +472,6 @@ class EyeLinkCalibrationProcedure(pylink.EyeLinkCustomDisplay):
     def _handleEvent(self, event):
         event_type_index = DeviceEvent.EVENT_TYPE_ID_INDEX
         if event[event_type_index] == EventConstants.KEYBOARD_RELEASE:
-            from .....keyboard import KeyboardInputEvent
             key_index = KeyboardInputEvent.CLASS_ATTRIBUTE_NAMES.index('key')
             char = event[key_index]
             if isinstance(char, bytes):
@@ -632,7 +636,7 @@ class EyeLinkCalibrationProcedure(pylink.EyeLinkCustomDisplay):
         for i in range(width):
             try:
                 self.rgb_index_array[line - 1, i] = buff[i]
-            except Exception as e:
+            except Exception:
                 printExceptionDetailsToStdErr()
                 print2err(
                     'FAILED TO DRAW PIXEL TO IMAGE LINE: %d %d' %

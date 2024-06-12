@@ -17,9 +17,20 @@ from psychopy.iohub.constants import EyeTrackerConstants
 from psychopy.iohub import EXP_SCRIPT_DIRECTORY
 from psychopy.iohub.errors import print2err, printExceptionDetailsToStdErr
 from psychopy.iohub.devices import Computer, Device
-from psychopy.iohub.devices.eyetracker.eye_events import (
+from psychopy.iohub.devices.eyetracker.eye_events import (  # noqa: F401
     EventConstants,
-    EyeTrackerDevice
+    EyeTrackerDevice,
+    EyeTrackerEvent,
+    EyeSampleEvent,
+    MonocularEyeSampleEvent,
+    BinocularEyeSampleEvent,
+    GazepointSampleEvent,
+    FixationStartEvent,
+    FixationEndEvent,
+    SaccadeStartEvent,
+    SaccadeEndEvent,
+    BlinkStartEvent,
+    BlinkEndEvent
 )
 
 try:
@@ -1573,6 +1584,7 @@ class EyeTracker(EyeTrackerDevice):
         self.setRecordingState(False)
         self.setConnectionState(False)
         EyeTrackerDevice._close(self)
+
 
 # ================= Command Functions ==========================================
 
