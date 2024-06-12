@@ -28,6 +28,14 @@ jobs:
           run: |
             python -m build
         
+        - name: Attach binaries
+          if: startsWith(github.ref, 'refs/tags/')
+          uses: softprops/action-gh-release@v2
+          with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            files: |
+              dist/*
+        
         - name: Upload to PyPi
           if: startsWith(github.ref, 'refs/tags/')
           uses: pypa/gh-action-pypi-publish@release/v1
