@@ -7,4 +7,9 @@
 devices by SR Research (via ioHub).
 """
 
-__version__ = "0.0.2"
+import importlib.metadata
+
+try:
+    __version__ = importlib.metadata.version("psychopy-eyetracker-sr-research")
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "0.dev"
