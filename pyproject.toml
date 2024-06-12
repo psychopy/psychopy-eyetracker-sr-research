@@ -30,15 +30,30 @@ urls.changelog = "https://github.com/psychopy/psychopy-eyetracker-sr-research/bl
 urls.documentation = "https://pages.github.com/psychopy/psychopy-eyetracker-sr-research"
 urls.repository = "https://github.com/psychopy/psychopy-eyetracker-sr-research"
 dependencies = [
+  "pylink",
 ]
+
+[project.optional-dependencies]
+# dependencies for building the docs
+docs = [
+  "psychopy",
+  "sphinx",
+  "furo",
+]
+# dependencies for running the test suite
+tests = [
+  "psychopy",
+  "pytest",
+]
+
 [tool.setuptools.packages.find]
 where = ["", "psychopy_eyetracker_sr_research",]
 
 [project.entry-points."psychopy.iohub.devices"]
-EyelinkEyeTracker = "psychopy_eyetracker_sr_research.sr_research.eyelink.eyetracker:EyeTracker"
+EyeTracker = "psychopy_eyetracker_sr_research.sr_research.eyelink.eyetracker:EyeTracker"
 
 [project.entry-points."psychopy.iohub.devices.eyetracker"]
-EyelinkEyeTracker = "psychopy_eyetracker_sr_research.sr_research.eyelink.eyetracker:EyeTracker"
+EyeTracker = "psychopy_eyetracker_sr_research.sr_research.eyelink.eyetracker:EyeTracker"
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
