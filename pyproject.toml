@@ -30,7 +30,7 @@ urls.changelog = "https://github.com/psychopy/psychopy-eyetracker-sr-research/bl
 urls.documentation = "https://pages.github.com/psychopy/psychopy-eyetracker-sr-research"
 urls.repository = "https://github.com/psychopy/psychopy-eyetracker-sr-research"
 dependencies = [
-  "pylink",
+  "sr-research-pylink",
 ]
 
 [project.optional-dependencies]
