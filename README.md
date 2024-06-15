@@ -12,7 +12,11 @@ devices:
     
 ## Installing
 
-Install this package with the following shell command:: 
+First install the SR Research `pylink` Python module with the following shell command:
+
+    pip install --index-url=https://pypi.sr-research.com sr-research-pylink
+
+Then install this package with the following shell command:
 
     pip install psychopy-eyetracker-sr-research
 
