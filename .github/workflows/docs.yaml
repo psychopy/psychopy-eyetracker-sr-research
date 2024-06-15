@@ -18,6 +18,7 @@ jobs:
     
     - name: Install package and dependencies
       run: |
+        python3 -m pip install --index-url=https://pypi.sr-research.com sr-research-pylink
         python3 -m pip install -e .[docs]
     
     - name: Build docs
