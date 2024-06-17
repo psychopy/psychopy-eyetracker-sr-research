@@ -49,11 +49,8 @@ tests = [
 [tool.setuptools.packages.find]
 where = ["", "psychopy_eyetracker_sr_research",]
 
-[project.entry-points."psychopy.iohub.devices"]
-EyeTracker = "psychopy_eyetracker_sr_research.sr_research.eyelink.eyetracker:EyeTracker"
-
 [project.entry-points."psychopy.iohub.devices.eyetracker"]
-EyeTracker = "psychopy_eyetracker_sr_research.sr_research.eyelink.eyetracker:EyeTracker"
+sr_research = "psychopy_eyetracker_eyelogic.sr_research"
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
