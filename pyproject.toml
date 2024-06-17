@@ -50,7 +50,7 @@ tests = [
 where = ["", "psychopy_eyetracker_sr_research",]
 
 [project.entry-points."psychopy.iohub.devices.eyetracker"]
-sr_research = "psychopy_eyetracker_eyelogic.sr_research"
+eyelink = "psychopy_eyetracker_eyelogic.sr_research.eyelink"
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
