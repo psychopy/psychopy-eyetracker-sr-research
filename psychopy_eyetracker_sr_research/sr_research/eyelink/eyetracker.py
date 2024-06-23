@@ -202,7 +202,7 @@ class EyeTracker(EyeTrackerDevice):
                         psychopy_file_name = None
                         for dev in self._iohub_server.devices:
                             if dev.__class__.__name__ == 'Experiment':
-                                psychopy_file_name = dev.getConfiguration()['filename']
+                                psychopy_file_name = dev.getConfiguration().get('filename')
                         if psychopy_file_name:
                             # make sure local_file_name is relative to _local_edf_dir
                             EyeTracker._local_edf_dir = os.path.commonprefix([self._local_edf_dir, psychopy_file_name])
