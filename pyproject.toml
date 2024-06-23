@@ -47,7 +47,8 @@ tests = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["", "psychopy_eyetracker_sr_research",]
+where = [""]
+include = ["psychopy_eyetracker_sr_research*"]
 
 [project.entry-points."psychopy.iohub.devices.eyetracker"]
 eyelink = "psychopy_eyetracker_sr_research.sr_research.eyelink"
