@@ -5,7 +5,7 @@
 # created by the ioHub Process will be assigned the default value
 # indicated here.
 #
-eyetracker.sr_research.eyelink.EyeTracker:
+eyetracker.hw.sr_research.eyelink.EyeTracker:
     # name: The unique name to assign to the device instance created.
     #   The device is accessed from within the PsychoPy script 
     #   using the name's value; therefore it must be a valid Python
