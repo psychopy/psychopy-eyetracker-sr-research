@@ -1,4 +1,4 @@
-eyetracker.hw.sr_research.eyelink.EyeTracker:
+eyetracker.eyelink.EyeTracker:
     name: tracker
     enable: IOHUB_BOOL
     save_events: IOHUB_BOOL
