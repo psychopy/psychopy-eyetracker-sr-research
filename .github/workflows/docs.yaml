@@ -5,7 +5,7 @@ on: push
 jobs:
   build:
     name: Build docs
-    runs-on: macos-11
+    runs-on: macos-latest
 
     steps:
     - name: Checkout
@@ -15,24 +15,28 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.10"
-    
+
+    - name: Prepare to build pytables for macos
+      if: runner.os == 'macOS' 
+      run: |
+        brew install hdf5
+        export HDF5_DIR=$(brew --prefix hdf5)
+        python3 -m pip install numpy numexpr cython
+
     - name: Install package and dependencies
-      run: |
-        python3 -m pip install -e .[docs]
-    
+      run: python3 -m pip install -e .[docs]
+
     - name: Build docs
-      run: |
-        sphinx-build docs_src docs -b dirhtml
-    
+      run: sphinx-build docs_src docs -b dirhtml
+
     - name: Bypass Jekyll
-      run: |
-        echo "" > docs/.nojekyll
+      run: echo "" > docs/.nojekyll
 
     - name: Commit
       run: |
         git add --all
         git commit --all -m "sys: Build documentation"
-    
+
     - name: Push
       uses: ad-m/github-push-action@master
       with:
