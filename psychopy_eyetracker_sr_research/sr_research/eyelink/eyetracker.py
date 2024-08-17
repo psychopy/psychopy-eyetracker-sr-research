@@ -470,6 +470,7 @@ class EyeTracker(EyeTrackerDevice):
             genv.window.close()
             del genv.window
             del genv
+            pylink.closeGraphics()
 
             self.setRecordingState(already_recording)
 
