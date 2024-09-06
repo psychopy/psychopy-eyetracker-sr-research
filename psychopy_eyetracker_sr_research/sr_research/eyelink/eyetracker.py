@@ -7,6 +7,7 @@ import gevent
 import threading
 import pylink
 import numpy as np
+import pylink.eyelink
 
 try:
     from psychopy.gui.wxgui import ProgressBarDialog
@@ -438,6 +439,10 @@ class EyeTracker(EyeTrackerDevice):
 
             genv = EyeLinkCoreGraphicsIOHubPsychopy(self, calibration_args)
 
+            # close existing graphics if this method has been called before
+            if pylink.eyelink.customGraphics:
+                pylink.closeGraphics()
+
             pylink.openGraphicsEx(genv)
 
             self._eyelink.doTrackerSetup()
@@ -470,7 +475,6 @@ class EyeTracker(EyeTrackerDevice):
             genv.window.close()
             del genv.window
             del genv
-            pylink.closeGraphics()
 
             self.setRecordingState(already_recording)
 
