@@ -7,7 +7,6 @@ import gevent
 import threading
 import pylink
 import numpy as np
-import pylink.eyelink
 
 try:
     from psychopy.gui.wxgui import ProgressBarDialog
