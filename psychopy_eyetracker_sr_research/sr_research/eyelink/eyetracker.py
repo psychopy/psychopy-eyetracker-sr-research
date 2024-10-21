@@ -224,7 +224,7 @@ class EyeTracker(EyeTrackerDevice):
             else:
                 r = default_native_data_file_name.rfind('.')
                 if r > 0:
-                    if default_native_data_file_name[r:] == 'edf'.lower():
+                    if default_native_data_file_name[r:].lower() == 'edf':
                         default_native_data_file_name = default_native_data_file_name[:r]
 
                 if len(default_native_data_file_name) > 7:
