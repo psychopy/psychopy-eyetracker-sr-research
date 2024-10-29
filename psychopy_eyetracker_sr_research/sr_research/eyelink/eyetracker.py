@@ -1310,7 +1310,7 @@ class EyeTracker(EyeTrackerDevice):
                         # print2err('EL Modes: ', modes)
                         for x in modes:
                             if x[-1] == 'B':
-                                x = int(x.replace('B', ' ').strip())
+                                x = int(x.replace('B', ' ').replace('R', ' ').strip())
                                 rts.append(x)
                         # print2err('EL srate: ', srate)
                         # print2err('EL rts: ', rts)
