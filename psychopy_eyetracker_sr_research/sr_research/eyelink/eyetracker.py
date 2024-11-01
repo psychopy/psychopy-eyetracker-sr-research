@@ -197,7 +197,7 @@ class EyeTracker(EyeTrackerDevice):
 
         # Set up the file names / paths to be used for the native EyeLink EDF file.
         EyeTracker._local_edf_dir = EXP_SCRIPT_DIRECTORY
-
+        self._eyelinkSetLinkAndFileContents()
         # native data recording file
         default_native_data_file_name = tracker_config.get('default_native_data_file_name', None)
         if isinstance(default_native_data_file_name, str):
