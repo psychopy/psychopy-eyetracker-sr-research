@@ -167,6 +167,14 @@ class EyeTracker(EyeTrackerDevice):
             print2err(' ---- Error during EyeLink EyeTracker Initialization ---- ')
             printExceptionDetailsToStdErr()
 
+    @property
+    def edfDir(self):
+        return EyeTracker._local_edf_dir
+
+    @edfDir.setter
+    def edfDir(self, value):
+        EyeTracker._local_edf_dir = value
+
     def _initConnection(self):
         """_initConnection is called when a connection to the eye tracker is established
            this needs to be called each time a connection is opened or reopened"""
