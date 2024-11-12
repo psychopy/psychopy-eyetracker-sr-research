@@ -417,7 +417,7 @@ class EyeTracker(EyeTrackerDevice):
                                                    THIRTEEN_POINTS='HV13')
                     eyelink.setCalibrationType(VALID_CALIBRATION_TYPES[cal_val])
 
-    def runSetupProcedure(self, calibration_args={}):
+    def runSetupProcedure(self, calibration_args={}, stop_recording=True):
         """Start the EyeLink Camera Setup and Calibration procedure.
 
         During the system setup, the following keys can be used on either the
@@ -437,7 +437,8 @@ class EyeTracker(EyeTrackerDevice):
             EyeLinkCoreGraphicsIOHubPsychopy = calibration.EyeLinkCalibrationProcedure
 
             already_recording = self.isRecordingEnabled()
-            self.setRecordingState(False)
+            if stop_recording:
+                self.setRecordingState(False)
 
             if calibration_args:
                 self.sendCalibrationSettingsCommands(self._eyelink, calibration_args)
