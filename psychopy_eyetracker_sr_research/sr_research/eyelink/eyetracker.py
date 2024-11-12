@@ -112,6 +112,7 @@ class EyeTracker(EyeTrackerDevice):
     # >>> Custom class attributes
     _eyelink = None
     _local_edf_dir = '.'
+    _user_edf_dir = None
     _full_edf_name = 'temp'
     _host_edf_name = None
     _active_edf_file = None
@@ -167,13 +168,13 @@ class EyeTracker(EyeTrackerDevice):
             print2err(' ---- Error during EyeLink EyeTracker Initialization ---- ')
             printExceptionDetailsToStdErr()
 
-    @property
-    def edfDir(self):
-        return EyeTracker._local_edf_dir
-
-    @edfDir.setter
-    def edfDir(self, value):
-        EyeTracker._local_edf_dir = value
+    @staticmethod
+    def setEdfDir(value):
+        EyeTracker._user_edf_dir = value
+    
+    @staticmethod
+    def getEdfDir():
+        return EyeTracker._user_edf_dir
 
     def _initConnection(self):
         """_initConnection is called when a connection to the eye tracker is established
@@ -204,7 +205,7 @@ class EyeTracker(EyeTrackerDevice):
         self.sendCalibrationSettingsCommands(self._eyelink, tracker_config.get('calibration'))
 
         # Set up the file names / paths to be used for the native EyeLink EDF file.
-        EyeTracker._local_edf_dir = EXP_SCRIPT_DIRECTORY
+        EyeTracker._local_edf_dir = EXP_SCRIPT_DIRECTORY if EyeTracker._user_edf_dir is None else EyeTracker._user_edf_dir
         self._eyelinkSetLinkAndFileContents()
         # native data recording file
         default_native_data_file_name = tracker_config.get('default_native_data_file_name', None)
