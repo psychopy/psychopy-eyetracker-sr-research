@@ -454,6 +454,10 @@ class EyeTracker(EyeTrackerDevice):
 
             genv = EyeLinkCoreGraphicsIOHubPsychopy(self, calibration_args)
 
+            # close existing graphics if this method has been called before
+            if pylink.eyelink.customGraphics:
+                pylink.closeGraphics()
+
             pylink.openGraphicsEx(genv)
 
             self._eyelink.doTrackerSetup()
