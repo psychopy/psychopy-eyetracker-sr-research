@@ -13,6 +13,7 @@ try:
 except ImportError:
     ProgressBarDialog = None
 
+from psychopy.tools.fileerrortools import handleFileCollision
 from psychopy.iohub.constants import EyeTrackerConstants
 from psychopy.iohub import EXP_SCRIPT_DIRECTORY
 from psychopy.iohub.errors import print2err, printExceptionDetailsToStdErr
@@ -298,6 +299,8 @@ class EyeTracker(EyeTrackerDevice):
                         if not os.path.isdir(self._local_edf_dir):
                             os.mkdir(self._local_edf_dir)
                         local_file_path = os.path.join(self._local_edf_dir, self._active_edf_file)
+                        if os.path.exists(local_file_path):
+                            local_file_path = handleFileCollision(local_file_path, 'rename')
                         self._eyelink.receiveDataFile(self._host_edf_name + '.EDF', local_file_path)
                     self._eyelink.close()
                     EyeTracker._active_edf_file = None
