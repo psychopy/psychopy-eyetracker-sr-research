@@ -38,8 +38,8 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
             "10.0.0.1",   # default value
             valType='str', 
             inputType="single",
-            hint=_translate("IP Address to connect to."),
-            label=_translate("IP4 Address"), 
+            hint=_translate("IP4 address to connect to."),
+            label=_translate("Device IP4 address"), 
             categ="Eyetracking"
         )
 
@@ -49,15 +49,15 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
             valType='str', 
             inputType="choice",
             allowedVals=["EYELINK 1000 DESKTOP", "EYELINK 1000 TOWER", "EYELINK 1000 REMOTE", "EYELINK 1000 LONG RANGE"],
-            hint=_translate("Eyetracker device model"),
-            label=_translate("Model for the eyetracker in use."),
+            hint=_translate("Device model for the eyetracker."),
+            label=_translate("Device model"),
             categ="Eyetracking"
         )
         params['elSimulationMode'] = Param(
             False,
             valType='bool',
             inputType="bool",
-            hint=_translate("Simulation mode."),
+            hint=_translate("Start interface in simulation mode."),
             label=_translate("Simulation mode?"),
             categ="Eyetracking"
         )
@@ -65,7 +65,7 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
             False,
             valType='bool',
             inputType="bool",
-            hint=_translate("Enable interface without connection."),
+            hint=_translate("Enable interface without connection for testing."),
             label=_translate("Enable interface without connection?"),
             categ="Eyetracking"
         )
