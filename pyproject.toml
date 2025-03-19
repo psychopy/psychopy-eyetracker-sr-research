@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "psychopy-eyetracker-sr-research"
-version = "0.0.4"
+version = "0.0.5"
 description = "Extension package for PsychoPy which adds support for SR Research eyetrackers (via ioHub)."
 readme = "README.md"
 requires-python = ">= 3.7"
@@ -52,6 +52,9 @@ include = ["psychopy_eyetracker_sr_research*"]
 
 [project.entry-points."psychopy.iohub.devices.eyetracker"]
 eyelink = "psychopy_eyetracker_sr_research.sr_research.eyelink"
+
+[project.entry-points."psychopy.experiment.components.settings.eyetracking"]
+EyeLinkEyetrackerBackend = "psychopy_eyetracker_sr_research.sr_research.eyelink.settings.EyeLinkEyetrackerBackend"
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
