@@ -6,7 +6,7 @@ from psychopy.experiment.components.settings.eyetracking import EyetrackerBacken
 class EyeLinkEyetrackerBackend(EyetrackerBackend):
     """Experiment settings for EyeLink 1000 eyetrackers.
     """
-    label = 'SR Research Ltd. EyeLink 1000 (iohub)'
+    label = 'SR Research Ltd EyeLink 1000 (iohub)'
     key = 'eyetracker.hw.sr_research.eyelink.EyeTracker'
 
     needsFullscreen = True
@@ -17,25 +17,27 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
         # define order
         order = [
             # other options
-            "elModelName",
-            "elSimulationMode",
-            "elEnableInterfaceWithoutConnection",
+            "srModelName",
+            "srSimulationMode",
+            "srNativeDataFileName",
             # network settings
-            "elNetIP4Address",
+            "srEnableInterfaceWithoutConnection",
+            "srNetIP4Address",
             # runtime settings
-            "elSamplingRate",
-            "elTrackEyes",
-            "elSampleFiltering",
-            "elSampleFilterType",
-            "elVOGPupilMeasureTypes",
-            "elVOGTrackingMode",
-            "elVOGPupilCenterAlgorithm"
+            "srSamplingRate",
+            "srTrackEyes",
+            "srLiveSampleFiltering",
+            "srFileSampleFiltering",
+            "srVOGPupilMeasureTypes",
+            "srVOGTrackingMode",
+            "srVOGPupilCenterAlgorithm"
         ]
 
-        # network settings
         params = {}
-        params['elNetIP4Address'] = Param(
-            "10.0.0.1",   # default value
+
+        # network settings
+        params['srNetIP4Address'] = Param(
+            "100.1.1.1",   # default value
             valType='str', 
             inputType="single",
             hint=_translate("IP4 address to connect to."),
@@ -44,7 +46,7 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
         )
 
         # other options
-        params['elModelName'] = Param(
+        params['srModelName'] = Param(
             'EYELINK 1000 DESKTOP', 
             valType='str', 
             inputType="choice",
@@ -53,25 +55,33 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
             label=_translate("Device model"),
             categ="Eyetracking"
         )
-        params['elSimulationMode'] = Param(
+        params['srSimulationMode'] = Param(
             False,
             valType='bool',
             inputType="bool",
-            hint=_translate("Start interface in simulation mode."),
-            label=_translate("Simulation mode?"),
+            hint=_translate("Use a mouse to simulate eye movements instead of real gaze data."),
+            label=_translate("Mouse simulation mode?"),
             categ="Eyetracking"
         )
-        params['elEnableInterfaceWithoutConnection'] = Param(
+        params['srEnableInterfaceWithoutConnection'] = Param(
             False,
             valType='bool',
             inputType="bool",
-            hint=_translate("Enable interface without connection for testing."),
-            label=_translate("Enable interface without connection?"),
+            hint=_translate("Enable interface without eyetracker connection for testing."),
+            label=_translate("Disable eyetracker connection?"),
+            categ="Eyetracking"
+        )
+        params['srNativeDataFileName'] = Param(
+            "et_data",
+            valType='str',
+            inputType="single",
+            hint=_translate("Set the default name of the native eyetracker EDF data file (excluding the .edf extension)"),
+            label=_translate("EDF data file name"),
             categ="Eyetracking"
         )
 
         # runtime settings
-        params['elSamplingRate'] = Param(
+        params['srSamplingRate'] = Param(
             '250', 
             valType='str', 
             inputType="choice",
@@ -80,33 +90,33 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
             label=_translate("Tracker sampling rate (Hz)"),
             categ="Eyetracking"
         )
-        params['elTrackEyes'] = Param(
-            'LEFT_EYE', 
+        params['srTrackEyes'] = Param(
+            'RIGHT_EYE', 
             valType='str', 
             inputType="choice",
             allowedVals=['LEFT_EYE', 'RIGHT_EYE', 'BOTH'],
             label=_translate("Track eyes"),
             hint=_translate("Which eyes to track."),
         )
-        params['elSampleFiltering'] = Param(
-            'FILTER_ALL', 
-            valType='str', 
-            inputType="choice",
-            allowedVals=['FILTER_ALL', 'FILTER_FILE', 'FILTER_ONLINE'],
-            hint=_translate("Sample filtering mode."),
-            label=_translate("Sample filtering"),
-            categ="Eyetracking"
-        )
-        params['elSampleFilterType'] = Param(
+        params['srLiveSampleFiltering'] = Param(
             'FILTER_LEVEL_OFF', 
             valType='str', 
             inputType="choice",
             allowedVals=['FILTER_LEVEL_OFF', 'FILTER_LEVEL_1', 'FILTER_LEVEL_2'],
-            hint=_translate("Sample filter type."),
-            label=_translate("Sample filter type"),
+            hint=_translate("Set the native filter level to be applied to samples."),
+            label=_translate("Live sample filter"),
             categ="Eyetracking"
         )
-        params['elVOGPupilMeasureTypes'] = Param(
+        params['srFileSampleFiltering'] = Param(
+            'FILTER_LEVEL_OFF', 
+            valType='str', 
+            inputType="choice",
+            allowedVals=['FILTER_LEVEL_OFF', 'FILTER_LEVEL_1', 'FILTER_LEVEL_2'],
+            hint=_translate("Set the native filter level to be applied to samples written to file."),
+            label=_translate("Save sample filter"),
+            categ="Eyetracking"
+        )
+        params['srVOGPupilMeasureTypes'] = Param(
             'PUPIL_AREA', 
             valType='str', 
             inputType="choice",
@@ -115,7 +125,7 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
             label=_translate("Pupil measure type"),
             categ="Eyetracking"
         )
-        params['elVOGTrackingMode'] = Param(
+        params['srVOGTrackingMode'] = Param(
             'PUPIL_CR_TRACKING', 
             valType='str', 
             inputType="choice",
@@ -124,7 +134,7 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
             label=_translate("Pupil tracking mode"),
             categ="Eyetracking"
         )
-        params['elVOGPupilCenterAlgorithm'] = Param(
+        params['srVOGPupilCenterAlgorithm'] = Param(
             'ELLIPSE_FIT', 
             valType='str', 
             inputType="choice",
@@ -141,20 +151,22 @@ class EyeLinkEyetrackerBackend(EyetrackerBackend):
         code = (
             "ioConfig[%(eyetracker)s] = {\n"
             "    'name': 'tracker',\n"
-            "    'model_name': %(elModelName)s,\n"
-            "    'simulation_mode': %(elSimulationMode)s,\n"
-            "    'enable_interface_without_connection': %(elEnableInterfaceWithoutConnection)s,\n"
-            "    'network_settings': %(elNetIP4Address)s,\n"
+            "    'model_name': %(srModelName)s,\n"
+            "    'simulation_mode': %(srSimulationMode)s,\n"
+            "    'default_native_data_file_name': %(srNativeDataFileName)s,\n"
+            "    'enable_interface_without_connection': %(srEnableInterfaceWithoutConnection)s,\n"
+            "    'network_settings': %(srNetIP4Address)s,\n"
             "    'runtime_settings': {\n"
-            "        'sampling_rate': %(elSamplingRate)s,\n"
-            "        'track_eyes': %(elTrackEyes)s,\n"
+            "        'sampling_rate': %(srSamplingRate)s,\n"
+            "        'track_eyes': %(srTrackEyes)s,\n"
             "        'sample_filtering': {\n"
-            "            %(elSampleFiltering)s: %(elSampleFilterType)s,\n"
+            "              'FILTER_ONLINE': %(srLiveSampleFiltering)s,\n"
+            "              'FILTER_FILE': %(srFileSampleFiltering)s,\n"
             "        },\n"
             "        'vog_settings': {\n"
-            "           'pupil_measure_types': %(elVOGPupilMeasureTypes)s,\n"
-            "           'tracking_mode': %(elVOGTrackingMode)s,\n"
-            "           'pupil_center_algorithm': %(elVOGPupilCenterAlgorithm)s,\n"
+            "           'pupil_measure_types': %(srVOGPupilMeasureTypes)s,\n"
+            "           'tracking_mode': %(srVOGTrackingMode)s,\n"
+            "           'pupil_center_algorithm': %(srVOGPupilCenterAlgorithm)s,\n"
             "        },\n"
             "    },\n"
             "}\n"
