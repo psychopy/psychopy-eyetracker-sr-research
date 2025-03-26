@@ -54,7 +54,7 @@ include = ["psychopy_eyetracker_sr_research*"]
 eyelink = "psychopy_eyetracker_sr_research.sr_research.eyelink"
 
 [project.entry-points."psychopy.experiment.components.settings.eyetracking"]
-EyeLinkEyetrackerBackend = "psychopy_eyetracker_sr_research.sr_research.eyelink.settings.EyeLinkEyetrackerBackend"
+EyeLinkEyetrackerBackend = "psychopy_eyetracker_sr_research.sr_research.eyelink.settings:EyeLinkEyetrackerBackend"
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml"]
