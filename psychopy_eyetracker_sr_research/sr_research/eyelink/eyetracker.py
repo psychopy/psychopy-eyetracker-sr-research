@@ -609,10 +609,7 @@ class EyeTracker(EyeTrackerDevice):
         """imageBackdrop transfers an image to the host PC as backdrop for gaze cursors.
 
         Args:
-            iwidth (int): Original image width.
-            iheight (int): Original image height.
-            pixels (list[list[tuple[int, int, int]]]): Pixels of the image in the following format:
-                pixels = [line_1, line_2, ...]; line = [pix1, pix2, ...]; pix = (r, g, b)
+            filename (str): Path to the image file (any file type supported by PIL.Image).
             xs (int): Crop x position (source).
             ys (int): Crop y position (source).
             width (int): Crop width (source).
