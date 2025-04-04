@@ -605,6 +605,36 @@ class EyeTracker(EyeTrackerDevice):
         except Exception:
             printExceptionDetailsToStdErr()
 
+    def readKeyButton(self):
+        """readKeyButton reads the next queued key/button event from the EyeLink buffer.
+        
+        The event is returned as a tuple containing five integers:
+        1. Key character if key press/release/repeat, KB_BUTTON (0xFF00) if button press or release
+        2. Button number or key modifier (Shift, Alt and Ctrl key states)
+        3. Key or button change (KB_PRESS, KB_RELEASE, or KB_REPEAT)
+        4. Key scan code
+        5. Tracker time of the key or button change
+
+        Returns:
+            tuple: (key, button, change, scan_code, time)
+        """
+        try:
+            return tuple(self._eyelink.readKeyButton())
+        except Exception:
+            printExceptionDetailsToStdErr()
+
+    def flushKeyButtons(self, enable_buttons=False):
+        """flushKeyButtons clears the key/button event buffer on the EyeLink host PC.
+
+        Args:
+            enable_buttons (bool): If True, all button press/release events will be stored.
+                If False, only key events and the last button pressed will be stored.
+        """
+        try:
+            self._eyelink.flushKeybuttons(int(enable_buttons))
+        except Exception:
+            printExceptionDetailsToStdErr()
+
     def _poll(self):
         try:
             if self._eyelink is None:
