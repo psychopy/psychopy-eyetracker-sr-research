@@ -386,6 +386,17 @@ class EyeTracker(EyeTrackerDevice):
         except Exception:
             printExceptionDetailsToStdErr()
         return EyeTrackerConstants.EYETRACKER_ERROR
+    
+    @staticmethod
+    def getCalibrationDict(calib):
+        # do default getting
+        base = EyeTrackerDevice.getCalibrationDict(calib)
+        calibDict = base.copy()
+        # use Target's dict method rather than standard serialization
+        calibDict['target_attributes'] = dict(calib.target)
+        calibDict['target_attributes']['animate'] = base['target_attributes']['animate']
+
+        return calibDict
 
     def sendCalibrationSettingsCommands(self, eyelink, calibration_config):
         if calibration_config:
