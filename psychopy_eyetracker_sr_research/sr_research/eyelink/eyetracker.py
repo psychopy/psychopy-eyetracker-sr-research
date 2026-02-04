@@ -616,6 +616,31 @@ class EyeTracker(EyeTrackerDevice):
         except Exception:
             printExceptionDetailsToStdErr()
 
+    def imageBackdrop(self, filename, xs, ys, width, height, xd, yd, xferoptions):
+        """imageBackdrop transfers an image to the host PC as backdrop for gaze cursors.
+
+        Args:
+            filename (str): Path to the image file (any file type supported by PIL.Image).
+            xs (int): Crop x position (source).
+            ys (int): Crop y position (source).
+            width (int): Crop width (source).
+            height (int): Crop height (source).
+            xd (int): X position (destination).
+            yd (int): Y position (destination).
+            xferoptions (int): Transfer options determining how bitmap is processed.
+                Any bitwise OR combination of the following constants:
+                - pylink.BX_AVERAGE: Averaging combined pixels
+                - pylink.BX_DARKEN: Choosing darkest and keep thin dark lines.
+                - pylink.BX_LIGHTEN: Choosing darkest and keep thin white lines.
+                - pylink.BX_MAXCONTRAST: Maximizes contrast.
+                - pylink.BX_NODITHER: Disables the dithering of the image.
+                - pylink.BX_GRAYSCALE: Converts the image to grayscale.
+        """
+        try:
+            self._eyelink.imageBackdrop(filename, xs, ys, width, height, xd, yd, xferoptions)
+        except Exception:
+            printExceptionDetailsToStdErr()
+
     def _poll(self):
         try:
             if self._eyelink is None:
