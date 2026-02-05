@@ -1445,8 +1445,8 @@ class EyeTracker(EyeTrackerDevice):
 
             # calibration coord space
             l, t, r, b = self._display_device.getBounds()
-            w = r - l
-            h = b - t
+            w = r - l - 1
+            h = b - t - 1
             eyelink.sendCommand(
                 'screen_pixel_coords %.2f %.2f %.2f %.2f' %
                 (0, 0, w, h))
