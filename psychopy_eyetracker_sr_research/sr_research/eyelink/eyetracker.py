@@ -113,6 +113,7 @@ class EyeTracker(EyeTrackerDevice):
     # >>> Custom class attributes
     _eyelink = None
     _local_edf_dir = '.'
+    _user_edf_dir = None
     _full_edf_name = 'temp'
     _host_edf_name = None
     _active_edf_file = None
@@ -146,6 +147,11 @@ class EyeTracker(EyeTrackerDevice):
                     EyeTracker._keyboard = dev
 
         try:
+            # Add additional EyeLink command functions as options for the overloaded
+            # EyeTracker.sendCommand() method. Note that this is separate from the
+            # pylink.EyeLink.sendCommand() method despite the same method name.
+            self._addCommandFunctions()
+
             tracker_config = self.getConfiguration()
             # Connect to the eye tracker; setting the EyeTracker._eyelink class
             # attribute to a pylink.EYELINK device class if EyeTracker._eyelink
@@ -156,89 +162,97 @@ class EyeTracker(EyeTrackerDevice):
                 tracker_config['enable_interface_without_connection'] = True
                 self.setConnectionState(True)
 
-            # Add additional EyeLink command functions as options for the overloaded
-            # EyeTracker.sendCommand() method. Note that this is separate from the
-            # pylink.EyeLink.sendCommand() method despite the same method name.
-            self._addCommandFunctions()
-
-            # Set the physical ini settings, like default screen distance,
-            # monitor size, and display coordinate bounds.
-            self._eyelinkSetScreenPhysicalData()
-
-            # Set whether to run in mouse simulation mode or not.
-            simulation_mode = tracker_config.get('simulation_mode', False)
-            if simulation_mode is True:
-                self._eyelink.sendCommand('aux_mouse_simulation = YES')
-            else:
-                self._eyelink.sendCommand('aux_mouse_simulation = NO')
-
-            # Set that the EyeLink connected button box, button 5
-            # (the big button on most of supported gamepads), will initiate
-            # an accept fixation command.
-            self._eyelink.sendCommand("button_function 5 'accept_target_fixation'")
-
-            # Set the 'runtime' configuration section of the eyetracker
-            # settings, including eye to track, sample filtering level, etc.
-            self._setRuntimeSettings(self._runtime_settings)
-
-            # Calibration related settings
-            self.sendCalibrationSettingsCommands(self._eyelink, tracker_config.get('calibration'))
-
-            # Set up the file names / paths to be used for the native EyeLink EDF file.
-            EyeTracker._local_edf_dir = EXP_SCRIPT_DIRECTORY
-
-            # native data recording file
-            default_native_data_file_name = tracker_config.get('default_native_data_file_name', None)
-            if isinstance(default_native_data_file_name, str):
-                if default_native_data_file_name == "EXPFILE":
-                    # If edf file name has been set to EXPFILE, use the datastore file name as the local
-                    # edf file name, getting around the 8 char host name limit.
-                    EyeTracker._local_edf_dir = os.path.join(EyeTracker._local_edf_dir, "data")
-                    if self._iohub_server.dsfile:
-                        local_file_name = self._iohub_server.dsfile.fileName[:-5]
-                        EyeTracker._full_edf_name = local_file_name
-                        EyeTracker._host_edf_name = default_native_data_file_name
-                    else:
-                        # If datastore file is not enabled, attempt to use the PsychoPy experiment filename
-                        psychopy_file_name = None
-                        for dev in self._iohub_server.devices:
-                            if dev.__class__.__name__ == 'Experiment':
-                                psychopy_file_name = dev.getConfiguration().get('filename')
-                        if psychopy_file_name:
-                            # make sure local_file_name is relative to _local_edf_dir
-                            EyeTracker._local_edf_dir = os.path.commonprefix([self._local_edf_dir, psychopy_file_name])
-                            local_file_name = os.path.relpath(psychopy_file_name, self._local_edf_dir)
-                            EyeTracker._full_edf_name = local_file_name
-                            EyeTracker._host_edf_name = default_native_data_file_name
-                else:
-                    r = default_native_data_file_name.rfind('.')
-                    if r > 0:
-                        if default_native_data_file_name[r:] == 'edf'.lower():
-                            default_native_data_file_name = default_native_data_file_name[:r]
-
-                    if len(default_native_data_file_name) > 7:
-                        EyeTracker._full_edf_name = default_native_data_file_name
-                        twoDigitRand = np.random.randint(10, 99)
-                        EyeTracker._host_edf_name = self._full_edf_name[:3] +\
-                            str(twoDigitRand) + self._full_edf_name[5:7]
-                    else:
-                        EyeTracker._full_edf_name = default_native_data_file_name
-                        EyeTracker._host_edf_name = default_native_data_file_name
-            else:
-                print2err('ERROR: default_native_data_file_name must be a string value')
-
-            if self._host_edf_name and self._local_edf_dir and self._full_edf_name:
-                EyeTracker._active_edf_file = self._full_edf_name + '.EDF'
-                self._eyelink.openDataFile(self._host_edf_name + '.EDF')
-            else:
-                print2err('WARNING: No active EDF file opened on host PC for this session.')
-
             # Create a fileTransferDialog class that will be used when a connection is closed and
             # a native EDF file needs to be transferred from Host to Experiment PC.
             EyeTracker._eyelink.progressUpdate = self._fileTransferProgressUpdate
         except Exception:
             print2err(' ---- Error during EyeLink EyeTracker Initialization ---- ')
             printExceptionDetailsToStdErr()
+
+    @staticmethod
+    def setEdfDir(value):
+        EyeTracker._user_edf_dir = value
+    
+    @staticmethod
+    def getEdfDir():
+        return EyeTracker._user_edf_dir
+
+    def _initConnection(self):
+        """_initConnection is called when a connection to the eye tracker is established
+           this needs to be called each time a connection is opened or reopened"""
+
+        tracker_config = self.getConfiguration()
+        # Set the physical ini settings, like default screen distance,
+        # monitor size, and display coordinate bounds.
+        self._eyelinkSetScreenPhysicalData()
+
+        # Set whether to run in mouse simulation mode or not.
+        simulation_mode = tracker_config.get('simulation_mode', False)
+        if simulation_mode is True:
+            self._eyelink.sendCommand('aux_mouse_simulation = YES')
+        else:
+            self._eyelink.sendCommand('aux_mouse_simulation = NO')
+
+        # Set that the EyeLink connected button box, button 5
+        # (the big button on most of supported gamepads), will initiate
+        # an accept fixation command.
+        self._eyelink.sendCommand("button_function 5 'accept_target_fixation'")
+
+        # Set the 'runtime' configuration section of the eyetracker
+        # settings, including eye to track, sample filtering level, etc.
+        self._setRuntimeSettings(self._runtime_settings)
+
+        # Calibration related settings
+        self.sendCalibrationSettingsCommands(self._eyelink, tracker_config.get('calibration'))
+
+        # Set up the file names / paths to be used for the native EyeLink EDF file.
+        EyeTracker._local_edf_dir = EXP_SCRIPT_DIRECTORY if EyeTracker._user_edf_dir is None else EyeTracker._user_edf_dir
+        self._eyelinkSetLinkAndFileContents()
+        # native data recording file
+        default_native_data_file_name = tracker_config.get('default_native_data_file_name', None)
+        if isinstance(default_native_data_file_name, str):
+            if default_native_data_file_name == "EXPFILE":
+                # If edf file name has been set to EXPFILE, use the datastore file name as the local
+                # edf file name, getting around the 8 char host name limit.
+                EyeTracker._local_edf_dir = os.path.join(EyeTracker._local_edf_dir, "data")
+                if self._iohub_server.dsfile:
+                    local_file_name = self._iohub_server.dsfile.fileName[:-5]
+                    EyeTracker._full_edf_name = local_file_name
+                    EyeTracker._host_edf_name = default_native_data_file_name
+                else:
+                    # If datastore file is not enabled, attempt to use the PsychoPy experiment filename
+                    psychopy_file_name = None
+                    for dev in self._iohub_server.devices:
+                        if dev.__class__.__name__ == 'Experiment':
+                            psychopy_file_name = dev.getConfiguration().get('filename')
+                    if psychopy_file_name:
+                        # make sure local_file_name is relative to _local_edf_dir
+                        EyeTracker._local_edf_dir = os.path.commonprefix([self._local_edf_dir, psychopy_file_name])
+                        local_file_name = os.path.relpath(psychopy_file_name, self._local_edf_dir)
+                        EyeTracker._full_edf_name = local_file_name
+                        EyeTracker._host_edf_name = default_native_data_file_name
+            else:
+                r = default_native_data_file_name.rfind('.')
+                if r > 0:
+                    if default_native_data_file_name[r:].lower() == 'edf':
+                        default_native_data_file_name = default_native_data_file_name[:r]
+
+                if len(default_native_data_file_name) > 7:
+                    EyeTracker._full_edf_name = default_native_data_file_name
+                    twoDigitRand = np.random.randint(10, 99)
+                    EyeTracker._host_edf_name = self._full_edf_name[:3] +\
+                        str(twoDigitRand) + self._full_edf_name[5:7]
+                else:
+                    EyeTracker._full_edf_name = default_native_data_file_name
+                    EyeTracker._host_edf_name = default_native_data_file_name
+        else:
+            print2err('ERROR: default_native_data_file_name must be a string value')
+
+        if self._host_edf_name and self._local_edf_dir and self._full_edf_name:
+            EyeTracker._active_edf_file = self._full_edf_name + '.EDF'
+            self._eyelink.openDataFile(self._host_edf_name + '.EDF')
+        else:
+            print2err('WARNING: No active EDF file opened on host PC for this session.')
 
     def trackerTime(self):
         """trackerTime returns the current EyeLink Host Application time in
@@ -290,6 +304,7 @@ class EyeTracker(EyeTrackerDevice):
                         self._eyelink.open(host_pc_ip_address)
                         pylink.flushGetkeyQueue()
                         self._eyelink.setOfflineMode()
+                        self._initConnection()
                     return EyeTrackerConstants.EYETRACKER_OK
                 elif enable is False and self._eyelink.isConnected():
                     self._eyelink.setOfflineMode()
@@ -425,7 +440,7 @@ class EyeTracker(EyeTrackerDevice):
                                                    THIRTEEN_POINTS='HV13')
                     eyelink.setCalibrationType(VALID_CALIBRATION_TYPES[cal_val])
 
-    def runSetupProcedure(self, calibration_args={}):
+    def runSetupProcedure(self, calibration_args={}, stop_recording=True):
         """Start the EyeLink Camera Setup and Calibration procedure.
 
         During the system setup, the following keys can be used on either the
@@ -445,7 +460,8 @@ class EyeTracker(EyeTrackerDevice):
             EyeLinkCoreGraphicsIOHubPsychopy = calibration.EyeLinkCalibrationProcedure
 
             already_recording = self.isRecordingEnabled()
-            self.setRecordingState(False)
+            if stop_recording:
+                self.setRecordingState(False)
 
             if calibration_args:
                 self.sendCalibrationSettingsCommands(self._eyelink, calibration_args)
@@ -1352,7 +1368,7 @@ class EyeTracker(EyeTrackerDevice):
                         # print2err('EL Modes: ', modes)
                         for x in modes:
                             if x[-1] == 'B':
-                                x = int(x.replace('B', ' ').strip())
+                                x = int(x.replace('B', ' ').replace('R', ' ').strip())
                                 rts.append(x)
                         # print2err('EL srate: ', srate)
                         # print2err('EL rts: ', rts)
